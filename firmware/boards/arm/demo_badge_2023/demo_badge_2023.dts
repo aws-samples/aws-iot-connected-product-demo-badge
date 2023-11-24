@@ -1,0 +1,351 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/led/led.h>
+
+#include "demo_badge_2023-pinctrl.dtsi"
+
+/ {
+	model = "AWS IoT Connected Product Demo Badge 2023";
+	compatible = "amazon-web-services,demo-badge-2023";
+
+	chosen {
+		zephyr,console = &usb_cdc_acm_uart;
+		zephyr,shell-uart = &usb_cdc_acm_uart;
+		// zephyr,uart-mcumgr = &usb_cdc_acm_uart;
+		// zephyr,bt-mon-uart = &usb_cdc_acm_uart;
+		// zephyr,bt-c2h-uart = &usb_cdc_acm_uart;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+		zephyr,ieee802154 = &ieee802154;
+		zephyr,display = &st7789v;
+	};
+
+	aliases {
+		user-led = &user_led;
+		display-backlight = &display_backlight;
+		neopixels = &neopixels;
+		button1 = &button1;
+		button2 = &button2;
+		button3 = &button3;
+		button4 = &button4;
+		ambient-light = &ambient_light;
+		battery-voltage = &battery_voltage;
+		expresslink-event = &expresslink_event;
+		expresslink-wake = &expresslink_wake;
+		expresslink-reset = &expresslink_reset;
+	};
+
+	zephyr,user {
+		io-channels = <&adc 0>, <&adc 1>; // input
+	};
+
+	disk0 {
+		compatible = "zephyr,flash-disk";
+		partition = <&usb_partition>;
+		disk-name = "USB";
+		cache-size = <4096>;
+	};
+
+	expresslink_inputs {
+		compatible = "gpio-keys"; // misusing it as simple input binding
+		expresslink_event: event {
+			gpios = <&gpio1 0 GPIO_PULL_UP>;
+			label = "ExpressLink EVENT";
+		};
+	};
+
+	expresslink_outputs {
+		compatible = "gpio-leds"; // misusing it as simple output binding
+		expresslink_wake: wake {
+			gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+			label = "ExpressLink WAKE";
+		};
+		expresslink_reset: reset {
+			gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+			label = "ExpressLink RESET";
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		user_led: led_0 {
+			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+			label = "User LED";
+		};
+	};
+
+	pwmleds {
+		compatible = "pwm-leds";
+		display_backlight: pwm_led_0 {
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		button1: button_1 {
+			gpios = <&gpio1 8 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 1";
+		};
+		button2: button_2 {
+			gpios = <&gpio0 7 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 2";
+		};
+		button3: button_3 {
+			gpios = <&gpio0 5 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 3";
+		};
+		button4: button_4 {
+			gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 4";
+		};
+	};
+};
+
+&uicr {
+	gpio-as-nreset;
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&adc {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	battery_voltage: channel@1 {
+		reg = <1>;
+		zephyr,gain = "ADC_GAIN_1_4";
+		zephyr,reference = "ADC_REF_VDD_1_4";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 20)>;
+		zephyr,input-positive = <NRF_SAADC_AIN0>;
+		zephyr,resolution = <14>;
+	};
+
+	ambient_light: channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_4";
+		zephyr,reference = "ADC_REF_VDD_1_4";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 20)>;
+		zephyr,input-positive = <NRF_SAADC_AIN1>;
+		zephyr,resolution = <14>;
+	};
+};
+
+&ieee802154 {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c0 {
+	compatible = "nordic,nrf-twi";
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	sht3xd@44 {
+		compatible = "sensirion,sht3xd";
+		reg = <0x44>;
+		alert-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+	};
+	lsm6dsl@6a {
+		compatible = "st,lsm6dsl";
+		reg = <0x6a>;
+		irq-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>, <&gpio0 15 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&spi1 {
+	compatible = "nordic,nrf-spi";
+	status = "okay";
+	pinctrl-0 = <&spi1_default>;
+	pinctrl-1 = <&spi1_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+
+	st7789v: st7789v@0 {
+		reg = <0>;
+		compatible = "sitronix,st7789v";
+		spi-max-frequency = <48000000>; /* 48MHz */
+		cmd-data-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;    /* DC */
+		// reset-gpios = <&gpioX XX GPIO_ACTIVE_LOW>;
+		width = <240>;
+		height = <280>;
+		x-offset = <0>;
+		y-offset = <20>;
+		vcom = <0x19>;
+		gctrl = <0x35>;
+		// vrhs = <0x12>;
+		// vdvs = <0x20>;
+		mdac = <0x00>;
+		gamma = <0x01>;
+		colmod = <0x05>;
+		lcm = <0x2c>;
+		porch-param = [ 0c 0c 00 33 33  ];
+		cmd2en-param = [ 5a 69 02 01  ];
+		pwctrl1-param = [ a4 a1  ];
+		pvgam-param = [ D0 04 0D 11 13 2B 3F 54 4C 18 0D 0B 1F 23  ];
+		nvgam-param = [ D0 04 0C 11 13 2C 3F 44 51 2F 1F 1F 20 23  ];
+		ram-param = [ 00 F8  ]; // or F0
+		rgb-param = [ CD 08 14  ];
+	};
+};
+
+&spi3 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	// not really an SPI device, but we mis-use the SPI peripheral to drive the WS2812 data signal
+	neopixels: ws2812@0 {
+		compatible = "worldsemi,ws2812-spi";
+
+		/* SPI */
+		reg = <0>; /* ignored, but necessary for SPI bindings */
+		spi-max-frequency = <4000000>;
+
+		/* WS2812 */
+		chain-length = <3>;
+		color-mapping = <LED_COLOR_ID_GREEN LED_COLOR_ID_RED LED_COLOR_ID_BLUE>;
+		spi-one-frame = <0x70>;
+		spi-zero-frame = <0x40>;
+	};
+};
+
+&qspi {
+	status = "okay";
+	pinctrl-0 = <&qspi_default>;
+	pinctrl-1 = <&qspi_sleep>;
+	pinctrl-names = "default", "sleep";
+	external_flash: external_flash@0 {
+		// using 16MB / 128Mbit flash module W25Q128BV
+		compatible = "nordic,qspi-nor";
+		reg = <0>;
+		jedec-id = [ ef 40 18  ]; // W25Q128
+		sck-frequency = <8000000>; // should go up to 50 MHz
+		size-in-bytes = <16777216>;
+		readoc = "read4io";
+		writeoc = "pp4o";
+	};
+};
+
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+
+	usb_cdc_acm_uart: cdc-acm-uart {
+		compatible = "zephyr,cdc-acm-uart";
+		rx-fifo-size = <2048>;
+	};
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_mbr_partition: partition@0 {
+			label = "boot_mbr";
+			reg = <0x00000000 0x00001000>;
+		};
+
+		slot0_partition: partition@1000 {
+			label = "code";
+			reg = <0x00001000 0x00e9000>;
+		};
+
+		storage_partition: partition@ea000 {
+			label = "storage_partition";
+			reg = <0x000ea000 0x0001000>;
+		};
+
+		mfg_storage: partition@eb000 {
+			label = "mfg_storage";
+			reg = <0x000eb000 0x0001000>;
+		};
+
+		sidewalk_storage: partition@ec000 {
+			label = "sidewalk_storage";
+			reg = <0x000ec000 0x0001000>;
+		};
+
+		// production (non-debug) Adafruit_nRF52_Bootloader
+
+		bootloader_partition: partition@f4000 {
+			label = "bootloader";
+			reg = <0x000f4000 0x00008000>;
+		};
+
+		bootloader_config_partition: partition@fc000 {
+			label = "bootloader_config_partition";
+			reg = <0x00fc000 0x00002000>;
+		};
+
+		bootloader_mbr_params_partition: partition@fe000 {
+			label = "bootloader_mbr_params";
+			reg = <0x000fe000 0x00001000>;
+		};
+
+		bootloader_settings_partition: partition@ff000 {
+			label = "bootloader_settings";
+			reg = <0x000ff000 0x00001000>;
+		};
+	};
+};
+
+&external_flash {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		usb_partition: partition@0 {
+			label = "usb";
+			reg = <0x00000000 0x00fff000>;
+		};
+	};
+};

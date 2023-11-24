@@ -1,0 +1,146 @@
+kibot:
+  version: 1
+
+global:
+  units: millimeters
+  filters:
+    - number: 1007
+    - number: 1015
+    - number: 58
+  kiauto_time_out_scale: 10
+  kiauto_wait_start: 900
+  dir: generated
+
+outputs:
+  - name: basic_pdf_sch_print
+    comment: Schematic in PDF format
+    type: pdf_sch_print
+    dir: +/schematic
+
+  - name: step_3d_model
+    comment: 3D model in STEP format
+    type: step
+    dir: +/3D
+
+  - name: render_3d_top
+    comment: 3D view from top
+    type: render_3d
+    dir: +/3D
+    options:
+      zoom: 3
+      height: 1000
+      width: 1000
+      solder_mask: '#101010'
+      background1: '#ffffff'
+      background2: '#ffffff'
+      # ray_tracing: true
+      # orthographic: true
+  - name: render_3d_bottom
+    comment: 3D view from bottom
+    type: render_3d
+    dir: +/3D
+    options:
+      zoom: 3
+      height: 1000
+      width: 1000
+      solder_mask: '#101010'
+      background1: '#ffffff'
+      background2: '#ffffff'
+      # ray_tracing: true
+      # orthographic: true
+      view: bottom
+
+  - name: FusionPCB_bom
+    comment: BOM for FusionPCB
+    type: bom
+    dir: +/FusionPCB
+    options:
+      # http://support.seeedstudio.com/knowledgebase/articles/1886734-how-do-i-prepare-the-bill-of-materials-bom-file
+      output: 'bom.%x'
+      number: 9 # keep up-to-date with panelize rows/cols attributes
+      # exclude_filter: only_jlc_parts
+      group_fields:
+        - Value
+        - Footprint
+        - "LCSC Part #"
+      ref_separator: ','
+      columns:
+        - name: Designator
+          field: References
+        - name: MPN
+          field: "LCSC Part #"
+        - name: "Qty"
+          field: "Build Quantity"
+        - name: Link
+          field: Datasheet
+        - name: Footprint
+          field: Footprint
+        - name: "Quantity Per PCB"
+          field: "Quantity Per PCB"
+      csv:
+        # hide_pcb_info: true
+        # hide_stats_info: true
+        quote_all: true
+
+  - name: Panelizing with KiKit
+    comment: auto-panelizing for multiple boards at once
+    type: panelize
+    dir: +/panel
+    options:
+      title: '+ (Panel)'
+      units: mm
+      default_angles: deg
+      configs:
+      - layout:
+          # Max board size is limited by v-cut capabilities:
+          # JLCPCB v-cut max panel dimensions: 300x300mm - https://jlcpcb.com/help/article/96-PCB-Panelization
+          # JLCPCB Standard PCB Assembly max panel dimensions: 250x250mm - https://jlcpcb.com/help/article/96-PCB-Panelization
+          # FusionPCB v-cut max panel dimensions: 380x380mm - http://support.seeedstudio.com/knowledgebase/articles/388503-what-are-the-pcb-panelization-rules
+          # One DemoBadge with tabs and boarder is around 75x75mm
+          rows: 3 # keep up-to-date with BOM `number` attribute
+          cols: 3 # keep up-to-date with BOM `number` attribute
+          rotation: "45deg"
+          space: 3
+        source:
+          tolerance: 100
+        tabs:
+          type: fixed
+          vwidth: 15
+          hwidth: 15
+        cuts:
+          type: vcuts
+          cutcurves: true
+        framing:
+          # type: frame
+          type: tightframe
+          fillet: 2
+          slotwidth: 2
+        tooling:
+          type: "4hole"
+          size: 1.152
+          hoffset: 3
+          voffset: 3
+        fiducials:
+          type: "4fid"
+          hoffset: 3
+          voffset: 6
+          coppersize: 2
+          opening: 1
+        text:
+          type: simple
+          text: "{date}"
+          hoffset: 5
+          voffset: 3
+        text2:
+          type: simple
+          text: "JLCJLCJLCJLC"
+          hoffset: 25
+          voffset: 3
+        page:
+          type: A0
+        post:
+          copperfill: true
+          millradius: 1 # radius --- 2mm diameter cutter
+          reconstructarcs: true
+          # refillzones: true # seems to break the lanyard cut-out copper area
+          # dimensions: true

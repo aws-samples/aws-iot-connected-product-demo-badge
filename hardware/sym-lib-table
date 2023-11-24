@@ -1,0 +1,10 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "demo-badge-2023")(type "KiCad")(uri "${KIPRJMOD}/components/demo-badge-2023.kicad_sym")(options "")(descr ""))
+  (lib (name "ALS-PT19-315C_L177_TR8")(type "KiCad")(uri "${KIPRJMOD}/components/ALS-PT19-315C_L177_TR8/ALS-PT19-315C_L177_TR8.kicad_sym")(options "")(descr ""))
+  (lib (name "Espressif")(type "KiCad")(uri "${KIPRJMOD}/components/espressif-kicad-libraries/libraries/Espressif.kicad_sym")(options "")(descr ""))
+  (lib (name "IN-S32GTLS")(type "KiCad")(uri "${KIPRJMOD}/components/IN-S32GTLS/IN-S32GTLS.kicad_sym")(options "")(descr ""))
+  (lib (name "JS102011SAQN")(type "KiCad")(uri "${KIPRJMOD}/components/JS102011SAQN/JS102011SAQN.kicad_sym")(options "")(descr ""))
+  (lib (name "JS202011JAQN")(type "KiCad")(uri "${KIPRJMOD}/components/JS202011JAQN/JS202011JAQN.kicad_sym")(options "")(descr ""))
+  (lib (name "PTS815")(type "KiCad")(uri "${KIPRJMOD}/components/PTS815/PTS815.kicad_sym")(options "")(descr ""))
+)

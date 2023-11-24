@@ -1,0 +1,118 @@
+From a443c1a55a7e4be4cfb57ff416c36854cf5ff5db Mon Sep 17 00:00:00 2001
+From: Thomas Kriechbaumer <thomas@kriechbaumer.name>
+Date: Mon, 17 Jul 2023 18:31:35 +0200
+Subject: [PATCH] add AWS IoT - Connected Product - Demo Badge
+
+2023 edition
+---
+ .../libraries/bootloader_dfu/bootloader.c     |  3 ++
+ src/boards/demo_badge_2023/board.h            | 46 +++++++++++++++++++
+ src/boards/demo_badge_2023/board.mk           |  2 +
+ src/boards/demo_badge_2023/pinconfig.c        | 19 ++++++++
+ 4 files changed, 70 insertions(+)
+ create mode 100644 src/boards/demo_badge_2023/board.h
+ create mode 100644 src/boards/demo_badge_2023/board.mk
+ create mode 100644 src/boards/demo_badge_2023/pinconfig.c
+
+diff --git a/lib/sdk11/components/libraries/bootloader_dfu/bootloader.c b/lib/sdk11/components/libraries/bootloader_dfu/bootloader.c
+index 875ab6c..09868de 100644
+--- a/lib/sdk11/components/libraries/bootloader_dfu/bootloader.c
++++ b/lib/sdk11/components/libraries/bootloader_dfu/bootloader.c
+@@ -147,6 +147,9 @@ static void wait_for_events(void)
+ 
+ bool bootloader_app_is_valid(void)
+ {
++  // override checks to ensure app boots up after flashing a full hex file
++  return true;
++
+   bool success = false;
+   uint32_t const app_addr = DFU_BANK_0_REGION_START;
+ 
+diff --git a/src/boards/demo_badge_2023/board.h b/src/boards/demo_badge_2023/board.h
+new file mode 100644
+index 0000000..a145d12
+--- /dev/null
++++ b/src/boards/demo_badge_2023/board.h
+@@ -0,0 +1,46 @@
++#ifndef _DEMO_BADGE_2023_H
++#define _DEMO_BADGE_2023_H
++
++#define _PINNUM(port, pin)    ((port)*32 + (pin))
++
++/*------------------------------------------------------------------*/
++/* LED
++ *------------------------------------------------------------------*/
++#define LEDS_NUMBER           1
++#define LED_PRIMARY_PIN       _PINNUM(0, 13)
++#define LED_STATE_ON          1
++
++#define LED_NEOPIXEL          _PINNUM(0, 12)
++#define NEOPIXELS_NUMBER      3
++#define BOARD_RGB_BRIGHTNESS  0x040404
++
++/*------------------------------------------------------------------*/
++/* BUTTON
++ *------------------------------------------------------------------*/
++#define BUTTONS_NUMBER        4
++#define BUTTON_1              _PINNUM(1, 8)
++#define BUTTON_2              _PINNUM(0, 7)
++#define BUTTON_3              _PINNUM(0, 5)
++#define BUTTON_4              _PINNUM(0, 4)
++#define BUTTON_PULL           NRF_GPIO_PIN_PULLUP
++
++//--------------------------------------------------------------------+
++// BLE OTA
++//--------------------------------------------------------------------+
++#define BLEDIS_MANUFACTURER   "AWS"
++#define BLEDIS_MODEL          "DemoBadge2023"
++
++//--------------------------------------------------------------------+
++// USB
++//--------------------------------------------------------------------+
++#define USB_DESC_VID           0x239A
++#define USB_DESC_UF2_PID       0x0029
++#define USB_DESC_CDC_ONLY_PID  0x002A
++
++//------------- UF2 -------------//
++#define UF2_PRODUCT_NAME      "AWS IoT Connected Product Demo Badge"
++#define UF2_VOLUME_LABEL      "BADGE_BOOT"
++#define UF2_BOARD_ID          "DemoBadge2023"
++#define UF2_INDEX_URL         "https://github.com/aws-samples/aws-iot-connected-product-demo-badge"
++
++#endif // _DEMO_BADGE_2023_H
+diff --git a/src/boards/demo_badge_2023/board.mk b/src/boards/demo_badge_2023/board.mk
+new file mode 100644
+index 0000000..2f02a72
+--- /dev/null
++++ b/src/boards/demo_badge_2023/board.mk
+@@ -0,0 +1,2 @@
++MCU_SUB_VARIANT = nrf52840
++SD_VERSION = 7.3.0
+diff --git a/src/boards/demo_badge_2023/pinconfig.c b/src/boards/demo_badge_2023/pinconfig.c
+new file mode 100644
+index 0000000..90768e8
+--- /dev/null
++++ b/src/boards/demo_badge_2023/pinconfig.c
+@@ -0,0 +1,19 @@
++#include "boards.h"
++#include "uf2/configkeys.h"
++
++__attribute__((used, section(".bootloaderConfig")))
++const uint32_t bootloaderConfig[] =
++{
++  /* CF2 START */
++  CFG_MAGIC0, CFG_MAGIC1,                       // magic
++  5, 100,                                       // used entries, total entries
++
++  CFG_FLASH_BYTES,         0x100000,                                // FLASH_BYTES = 0x100000
++  CFG_RAM_BYTES,           0x40000,                                 // RAM_BYTES = 0x40000
++  CFG_BOOTLOADER_BOARD_ID, (USB_DESC_VID << 16) | USB_DESC_UF2_PID, // BOOTLOADER_BOARD_ID = USB VID+PID, used for verification when updating bootloader via uf2
++  CFG_UF2_FAMILY,          0xada52840,                              // UF2_FAMILY = 0xada52840
++  CFG_PINS_PORT_SIZE,      0x20,                                    // PINS_PORT_SIZE = PA_32
++
++  0, 0, 0, 0, 0, 0, 0, 0
++  /* CF2 END */
++};
+-- 
+2.42.0
+

@@ -1,0 +1,258 @@
+From 83f86875fbc0ccadf1f3e07cf1ffcb6c05d6a6c5 Mon Sep 17 00:00:00 2001
+From: Thomas Kriechbaumer <thomas@kriechbaumer.name>
+Date: Mon, 17 Jul 2023 18:15:27 +0200
+Subject: [PATCH] add AWS IoT - Connected Product - Demo Badge
+
+2023 edition
+---
+ .gitmodules                                   | 24 ++++++++++
+ frozen/Adafruit_CircuitPython_Bitmap_Font     |  1 +
+ frozen/Adafruit_CircuitPython_Debouncer       |  1 +
+ .../Adafruit_CircuitPython_DisplayIO_Layout   |  1 +
+ frozen/Adafruit_CircuitPython_ImageLoad       |  1 +
+ frozen/Adafruit_CircuitPython_LED_Animation   |  1 +
+ frozen/Adafruit_CircuitPython_Pixelbuf        |  1 +
+ frozen/Adafruit_CircuitPython_SHT31D          |  1 +
+ frozen/Adafruit_CircuitPython_miniQR          |  1 +
+ ports/nrf/boards/demo_badge_2023/board.c      |  3 ++
+ .../boards/demo_badge_2023/mpconfigboard.h    | 29 ++++++++++++
+ .../boards/demo_badge_2023/mpconfigboard.mk   | 31 ++++++++++++
+ ports/nrf/boards/demo_badge_2023/pins.c       | 47 +++++++++++++++++++
+ 13 files changed, 142 insertions(+)
+ create mode 160000 frozen/Adafruit_CircuitPython_Bitmap_Font
+ create mode 160000 frozen/Adafruit_CircuitPython_Debouncer
+ create mode 160000 frozen/Adafruit_CircuitPython_DisplayIO_Layout
+ create mode 160000 frozen/Adafruit_CircuitPython_ImageLoad
+ create mode 160000 frozen/Adafruit_CircuitPython_LED_Animation
+ create mode 160000 frozen/Adafruit_CircuitPython_Pixelbuf
+ create mode 160000 frozen/Adafruit_CircuitPython_SHT31D
+ create mode 160000 frozen/Adafruit_CircuitPython_miniQR
+ create mode 100644 ports/nrf/boards/demo_badge_2023/board.c
+ create mode 100644 ports/nrf/boards/demo_badge_2023/mpconfigboard.h
+ create mode 100644 ports/nrf/boards/demo_badge_2023/mpconfigboard.mk
+ create mode 100644 ports/nrf/boards/demo_badge_2023/pins.c
+
+diff --git a/.gitmodules b/.gitmodules
+index e4b59e8e42..941a5590ca 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -341,3 +341,27 @@
+ [submodule "lib/certificates"]
+ 	path = lib/certificates
+ 	url = https://github.com/adafruit/certificates
++[submodule "frozen/Adafruit_CircuitPython_SHT31D"]
++	path = frozen/Adafruit_CircuitPython_SHT31D
++	url = https://github.com/adafruit/Adafruit_CircuitPython_SHT31D
++[submodule "frozen/Adafruit_CircuitPython_miniQR"]
++	path = frozen/Adafruit_CircuitPython_miniQR
++	url = https://github.com/adafruit/Adafruit_CircuitPython_miniQR
++[submodule "frozen/Adafruit_CircuitPython_LED_Animation"]
++	path = frozen/Adafruit_CircuitPython_LED_Animation
++	url = https://github.com/adafruit/Adafruit_CircuitPython_LED_Animation
++[submodule "frozen/Adafruit_CircuitPython_Debouncer"]
++	path = frozen/Adafruit_CircuitPython_Debouncer
++	url = https://github.com/adafruit/Adafruit_CircuitPython_Debouncer
++[submodule "frozen/Adafruit_CircuitPython_ImageLoad"]
++	path = frozen/Adafruit_CircuitPython_ImageLoad
++	url = https://github.com/adafruit/Adafruit_CircuitPython_ImageLoad
++[submodule "frozen/Adafruit_CircuitPython_Pixelbuf"]
++	path = frozen/Adafruit_CircuitPython_Pixelbuf
++	url = https://github.com/adafruit/Adafruit_CircuitPython_Pixelbuf
++[submodule "frozen/Adafruit_CircuitPython_DisplayIO_Layout"]
++	path = frozen/Adafruit_CircuitPython_DisplayIO_Layout
++	url = https://github.com/adafruit/Adafruit_CircuitPython_DisplayIO_Layout
++[submodule "frozen/Adafruit_CircuitPython_Bitmap_Font"]
++	path = frozen/Adafruit_CircuitPython_Bitmap_Font
++	url = https://github.com/adafruit/Adafruit_CircuitPython_Bitmap_Font
+diff --git a/frozen/Adafruit_CircuitPython_Bitmap_Font b/frozen/Adafruit_CircuitPython_Bitmap_Font
+new file mode 160000
+index 0000000000..c78e546f47
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_Bitmap_Font
+@@ -0,0 +1 @@
++Subproject commit c78e546f47942629bd931b7d16c127995609227c
+diff --git a/frozen/Adafruit_CircuitPython_Debouncer b/frozen/Adafruit_CircuitPython_Debouncer
+new file mode 160000
+index 0000000000..4e7e50e42f
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_Debouncer
+@@ -0,0 +1 @@
++Subproject commit 4e7e50e42fc8e2283b7a67d57735cecc2b853b2a
+diff --git a/frozen/Adafruit_CircuitPython_DisplayIO_Layout b/frozen/Adafruit_CircuitPython_DisplayIO_Layout
+new file mode 160000
+index 0000000000..4b786ccc94
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_DisplayIO_Layout
+@@ -0,0 +1 @@
++Subproject commit 4b786ccc94bc5e2869b19d71e6571ef60a0fb1c9
+diff --git a/frozen/Adafruit_CircuitPython_ImageLoad b/frozen/Adafruit_CircuitPython_ImageLoad
+new file mode 160000
+index 0000000000..1bf25b5871
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_ImageLoad
+@@ -0,0 +1 @@
++Subproject commit 1bf25b587146b6fa0bd1361b3eb43797d55409ec
+diff --git a/frozen/Adafruit_CircuitPython_LED_Animation b/frozen/Adafruit_CircuitPython_LED_Animation
+new file mode 160000
+index 0000000000..66898580ac
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_LED_Animation
+@@ -0,0 +1 @@
++Subproject commit 66898580acc1be5c2761d1e9431206c287d78945
+diff --git a/frozen/Adafruit_CircuitPython_Pixelbuf b/frozen/Adafruit_CircuitPython_Pixelbuf
+new file mode 160000
+index 0000000000..72069e591b
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_Pixelbuf
+@@ -0,0 +1 @@
++Subproject commit 72069e591b914ea0824778ebba9f3a81e410cc29
+diff --git a/frozen/Adafruit_CircuitPython_SHT31D b/frozen/Adafruit_CircuitPython_SHT31D
+new file mode 160000
+index 0000000000..389e024313
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_SHT31D
+@@ -0,0 +1 @@
++Subproject commit 389e02431391ebf4b98ad1f7f165494cf3830fdf
+diff --git a/frozen/Adafruit_CircuitPython_miniQR b/frozen/Adafruit_CircuitPython_miniQR
+new file mode 160000
+index 0000000000..e08f7858d1
+--- /dev/null
++++ b/frozen/Adafruit_CircuitPython_miniQR
+@@ -0,0 +1 @@
++Subproject commit e08f7858d1bbe0c2d97bac4001a428570a4a56ff
+diff --git a/ports/nrf/boards/demo_badge_2023/board.c b/ports/nrf/boards/demo_badge_2023/board.c
+new file mode 100644
+index 0000000000..e8fec80c7c
+--- /dev/null
++++ b/ports/nrf/boards/demo_badge_2023/board.c
+@@ -0,0 +1,3 @@
++#include "supervisor/board.h"
++
++// Use the MP_WEAK supervisor/shared/board.c versions of routines not defined here.
+diff --git a/ports/nrf/boards/demo_badge_2023/mpconfigboard.h b/ports/nrf/boards/demo_badge_2023/mpconfigboard.h
+new file mode 100644
+index 0000000000..af5a283cb8
+--- /dev/null
++++ b/ports/nrf/boards/demo_badge_2023/mpconfigboard.h
+@@ -0,0 +1,29 @@
++#include "nrfx/hal/nrf_gpio.h"
++
++#define MICROPY_HW_BOARD_NAME       "AWS IoT Connected Product Demo Badge 2023"
++#define MICROPY_HW_MCU_NAME         "nRF52840"
++
++#define BOARD_HAS_CRYSTAL           1
++
++#if QSPI_FLASH_FILESYSTEM
++#define MICROPY_QSPI_DATA0          NRF_GPIO_PIN_MAP(0, 20)
++#define MICROPY_QSPI_DATA1          NRF_GPIO_PIN_MAP(0, 21)
++#define MICROPY_QSPI_DATA2          NRF_GPIO_PIN_MAP(0, 22)
++#define MICROPY_QSPI_DATA3          NRF_GPIO_PIN_MAP(0, 23)
++#define MICROPY_QSPI_SCK            NRF_GPIO_PIN_MAP(0, 19)
++#define MICROPY_QSPI_CS             NRF_GPIO_PIN_MAP(0, 17)
++#endif
++
++#define MICROPY_HW_NEOPIXEL         (&pin_P0_12)
++
++#define MICROPY_HW_LED_STATUS       (&pin_P0_13)
++
++#define DEFAULT_I2C_BUS_SCL         (&pin_P0_27)
++#define DEFAULT_I2C_BUS_SDA         (&pin_P0_26)
++
++#define DEFAULT_SPI_BUS_SCK         (&pin_P1_04)
++#define DEFAULT_SPI_BUS_MOSI        (&pin_P1_05)
++#define DEFAULT_SPI_BUS_MISO        (&pin_P0_31)
++
++#define DEFAULT_UART_BUS_RX         (&pin_P1_01)
++#define DEFAULT_UART_BUS_TX         (&pin_P1_02)
+diff --git a/ports/nrf/boards/demo_badge_2023/mpconfigboard.mk b/ports/nrf/boards/demo_badge_2023/mpconfigboard.mk
+new file mode 100644
+index 0000000000..afd0d0d440
+--- /dev/null
++++ b/ports/nrf/boards/demo_badge_2023/mpconfigboard.mk
+@@ -0,0 +1,31 @@
++USB_VID = 0x239A
++USB_PID = 0x802A
++USB_PRODUCT = "AWS IoT Connected Product Demo Badge 2023"
++SOFTDEV_VERSION=7.0.1
++USB_MANUFACTURER = "AWS"
++
++MCU_CHIP = nrf52840
++
++QSPI_FLASH_FILESYSTEM = 1
++EXTERNAL_FLASH_DEVICES = "W25Q128JVxQ"
++
++CIRCUITPY_FULL_BUILD = 1
++
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_Bitmap_Font
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_BLE
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_BusDevice
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_Debouncer
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_Display_Shapes
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_Display_Text
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_DisplayIO_Layout
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_HID
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_ImageLoad
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_LED_Animation
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_LSM6DS
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_miniQR
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_NeoPixel
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_Pixelbuf
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_Register
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_SHT31D
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_ST7789
++FROZEN_MPY_DIRS += $(TOP)/frozen/Adafruit_CircuitPython_Ticks
+diff --git a/ports/nrf/boards/demo_badge_2023/pins.c b/ports/nrf/boards/demo_badge_2023/pins.c
+new file mode 100644
+index 0000000000..fc89b450d7
+--- /dev/null
++++ b/ports/nrf/boards/demo_badge_2023/pins.c
+@@ -0,0 +1,47 @@
++#include "shared-bindings/board/__init__.h"
++
++STATIC const mp_rom_map_elem_t board_module_globals_table[] = {
++    CIRCUITPYTHON_BOARD_DICT_STANDARD_ITEMS
++
++    { MP_ROM_QSTR(MP_QSTR_AMBIENT_LIGHT), MP_ROM_PTR(&pin_P0_03) },
++    { MP_ROM_QSTR(MP_QSTR_VOLTAGE_MONITOR), MP_ROM_PTR(&pin_P0_02) },
++
++    { MP_ROM_QSTR(MP_QSTR_VOLTAGE_MONITOR), MP_ROM_PTR(&pin_P0_02) },
++
++    { MP_ROM_QSTR(MP_QSTR_SHT31_ALERT), MP_ROM_PTR(&pin_P1_09) },
++    { MP_ROM_QSTR(MP_QSTR_LSM6DSL_INT1), MP_ROM_PTR(&pin_P0_14) },
++    { MP_ROM_QSTR(MP_QSTR_LSM6DSL_INT2), MP_ROM_PTR(&pin_P0_15) },
++
++    { MP_ROM_QSTR(MP_QSTR_BUTTON_1), MP_ROM_PTR(&pin_P1_08) },
++    { MP_ROM_QSTR(MP_QSTR_BUTTON_2), MP_ROM_PTR(&pin_P0_07) },
++    { MP_ROM_QSTR(MP_QSTR_BUTTON_3), MP_ROM_PTR(&pin_P0_05) },
++    { MP_ROM_QSTR(MP_QSTR_BUTTON_4), MP_ROM_PTR(&pin_P0_04) },
++
++    { MP_ROM_QSTR(MP_QSTR_EXPRESSLINK_TX), MP_ROM_PTR(&pin_P1_02) },
++    { MP_ROM_QSTR(MP_QSTR_EXPRESSLINK_RX), MP_ROM_PTR(&pin_P1_01) },
++    { MP_ROM_QSTR(MP_QSTR_EXPRESSLINK_DEBUG_TX), MP_ROM_PTR(&pin_P1_02) },
++    { MP_ROM_QSTR(MP_QSTR_EXPRESSLINK_DEBUG_RX), MP_ROM_PTR(&pin_P1_01) },
++    { MP_ROM_QSTR(MP_QSTR_EXPRESSLINK_WAKE), MP_ROM_PTR(&pin_P1_14) },
++    { MP_ROM_QSTR(MP_QSTR_EXPRESSLINK_RESET), MP_ROM_PTR(&pin_P1_15) },
++    { MP_ROM_QSTR(MP_QSTR_EXPRESSLINK_EVENT), MP_ROM_PTR(&pin_P1_00) },
++
++    { MP_ROM_QSTR(MP_QSTR_DISPLAY_BACKLIGHT_PWM), MP_ROM_PTR(&pin_P1_03) },
++    { MP_ROM_QSTR(MP_QSTR_DISPLAY_DC), MP_ROM_PTR(&pin_P0_06) },
++    { MP_ROM_QSTR(MP_QSTR_DISPLAY_CS), MP_ROM_PTR(&pin_P0_08) },
++
++    { MP_ROM_QSTR(MP_QSTR_SCK), MP_ROM_PTR(&pin_P1_04) },
++    { MP_ROM_QSTR(MP_QSTR_MOSI), MP_ROM_PTR(&pin_P1_05) },
++    { MP_ROM_QSTR(MP_QSTR_MISO), MP_ROM_PTR(&pin_P0_31) },
++
++    { MP_ROM_QSTR(MP_QSTR_SCL), MP_ROM_PTR(&pin_P0_27) },
++    { MP_ROM_QSTR(MP_QSTR_SDA), MP_ROM_PTR(&pin_P0_26) },
++
++    { MP_ROM_QSTR(MP_QSTR_NEOPIXEL), MP_ROM_PTR(&pin_P0_12) },
++    { MP_ROM_QSTR(MP_QSTR_LED), MP_ROM_PTR(&pin_P0_13) },
++
++    { MP_ROM_QSTR(MP_QSTR_UART), MP_ROM_PTR(&board_uart_obj) },
++    { MP_ROM_QSTR(MP_QSTR_SPI), MP_ROM_PTR(&board_spi_obj) },
++    { MP_ROM_QSTR(MP_QSTR_I2C), MP_ROM_PTR(&board_i2c_obj) },
++};
++
++MP_DEFINE_CONST_DICT(board_module_globals, board_module_globals_table);
+--
+2.42.0

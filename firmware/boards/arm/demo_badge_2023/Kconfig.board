@@ -1,0 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+config BOARD_DEMO_BADGE_2023
+	bool "AWS IoT Connected Product Demo Badge 2023"
+	depends on SOC_NRF52840_QIAA

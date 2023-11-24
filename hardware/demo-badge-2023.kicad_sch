@@ -1,0 +1,91 @@
+(kicad_sch (version 20230121) (generator eeschema)
+
+  (uuid b29f51b7-69d4-4d97-a81d-c57880f223e3)
+
+  (paper "A4")
+
+  (title_block
+    (title "AWS IoT - Connected Product - Demo Badge 2023")
+    (date "2023-08-22")
+    (rev "1")
+    (company "Amazon Web Services")
+    (comment 1 "Thomas Kriechbaumer (thomkrie@amazon.com)")
+    (comment 4 "https://github.com/aws-samples/aws-iot-connected-product-demo-badge")
+  )
+
+  (lib_symbols
+  )
+
+
+  (sheet (at 16.51 71.12) (size 26.67 19.05) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 3a2d3bf7-a186-4d9b-82ab-83578ca1341f)
+    (property "Sheetname" "Peripherals" (at 16.51 70.4084 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "peripherals.kicad_sch" (at 16.51 90.7546 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "demo-badge-2023"
+        (path "/b29f51b7-69d4-4d97-a81d-c57880f223e3" (page "3"))
+      )
+    )
+  )
+
+  (sheet (at 16.51 44.45) (size 26.67 19.05) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 6831f427-fa0c-47cd-8504-d1079e6e7f83)
+    (property "Sheetname" "ExpressLink" (at 16.51 43.7384 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "expresslink.kicad_sch" (at 16.51 64.0846 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "demo-badge-2023"
+        (path "/b29f51b7-69d4-4d97-a81d-c57880f223e3" (page "2"))
+      )
+    )
+  )
+
+  (sheet (at 16.51 17.78) (size 26.67 19.05) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid ac836b27-b9b3-454b-96c5-6b531b2f32ad)
+    (property "Sheetname" "nrf52840" (at 16.51 17.0684 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "nrf52840.kicad_sch" (at 16.51 37.4146 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "demo-badge-2023"
+        (path "/b29f51b7-69d4-4d97-a81d-c57880f223e3" (page "4"))
+      )
+    )
+  )
+
+  (sheet (at 16.51 97.79) (size 26.67 19.05) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid cedb5143-96f0-4051-ba6b-c944fce4a783)
+    (property "Sheetname" "Power" (at 16.51 97.0784 0)
+      (effects (font (size 1.27 1.27)) (justify left bottom))
+    )
+    (property "Sheetfile" "power.kicad_sch" (at 16.51 117.4246 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "demo-badge-2023"
+        (path "/b29f51b7-69d4-4d97-a81d-c57880f223e3" (page "5"))
+      )
+    )
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+)

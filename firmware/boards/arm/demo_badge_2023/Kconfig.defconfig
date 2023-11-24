@@ -1,0 +1,12 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+if BOARD_DEMO_BADGE_2023
+
+config BOARD
+	default "demo_badge_2023"
+
+config BT_CTLR
+	default BT
+
+endif # BOARD_DEMO_BADGE_2023

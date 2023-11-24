@@ -1,0 +1,98 @@
+kibot:
+  version: 1
+
+global:
+  units: millimeters
+  filters:
+    - number: 1007
+    - number: 1015
+    - number: 58
+  dir: generated
+
+import:
+  - file: kibot-default.yaml
+    outputs: FusionPCB_bom
+
+outputs:
+  - name: FusionPCB_position
+    comment: Pick and place file
+    type: position
+    dir: +/FusionPCB
+    options:
+      output: 'position.%x'
+      format: CSV
+      units: millimeters
+      separate_files_for_front_and_back: false
+      only_smd: true
+      columns:
+      - id: Ref
+        name: Designator
+      - Val
+      - Package
+      - id: PosX
+        name: Mid X
+      - id: PosY
+        name: Mid Y
+      - id: Rot
+        name: Rotation
+      - id: Side
+        name: Layer
+
+  - name: FusionPCB_gerbers
+    comment: Gerbers compatible with FusionPCB
+    type: gerber
+    dir: +/FusionPCB
+    options: &gerber_options
+      exclude_edge_layer: true
+      exclude_pads_from_silkscreen: true
+      plot_sheet_reference: false
+      plot_footprint_refs: true
+      plot_footprint_values: true
+      force_plot_invisible_refs_vals: false
+      tent_vias: true
+      use_protel_extensions: true
+      create_gerber_job_file: false
+      output: "%f.%x"
+      gerber_precision: 4.6
+      use_gerber_x2_attributes: false
+      use_gerber_net_attributes: false
+      disable_aperture_macros: true
+      line_width: 0.1
+      uppercase_extensions: true
+      subtract_mask_from_silk: false
+      use_aux_axis_as_origin: true
+      inner_extension_pattern: '.gl%N'
+      edge_cut_extension: '.gml'
+    layers:
+      - copper
+      - technical
+      - F.SilkS
+      - B.SilkS
+      - F.Mask
+      - B.Mask
+      - Edge.Cuts
+      - User.Comments
+
+  - name: FusionPCB_drill
+    comment: Drill files compatible with FusionPCB
+    type: excellon
+    dir: +/FusionPCB
+    options:
+      pth_and_npth_single_file: true
+      use_aux_axis_as_origin: true
+      output: "%f.txt"
+
+  - name: FusionPCB
+    comment: ZIP file for FusionPCB
+    type: compress
+    dir: +/FusionPCB
+    options:
+      files:
+        - from_output: FusionPCB_gerbers
+          dest: /
+        - from_output: FusionPCB_drill
+          dest: /
+        - from_output: FusionPCB_position
+          dest: /
+        - source: "**/bom.csv"
+          dest: /

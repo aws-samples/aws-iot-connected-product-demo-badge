@@ -1,0 +1,9 @@
+# editors
+*.swp
+*~
+
+build/
+local/
+src/app_version.c
+
+env.sh

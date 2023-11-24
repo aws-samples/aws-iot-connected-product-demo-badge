@@ -1,0 +1,40 @@
+mainmenu "AWS IoT Connected Product Demo Badge 2023"
+
+menu "Amazon Sidewalk"
+
+config SM_TIMER_DEMO_CAPABILITY_PERIOD_MS
+        prompt "Capability period in ms"
+        int
+        default 5000
+        help
+               Delay in ms to wait after device is registered to send capability to cloud
+
+config SM_TIMER_CONNECT_LINK_TYPE_1_DELAY_MS
+        prompt "BLE Connection request delay after inactivity in ms"
+        int
+        default 60000
+        help
+                If operating in BLE mode the connection request has to be sent before any message can be send.
+                This config determines delay between connection requests.
+
+config SM_TIMER_CONNECT_LINK_TYPE_1_INIT_DELAY_MS
+        prompt "BLE Initial connection request delay in ms"
+        int
+        default 5000
+        help
+                After device has been registered and time sync the connection request has to be sent.
+                This config determines the delay before first connection request.
+
+config SM_TIMER_DEMO_NOTIFY_SENSOR_DATA_PERIOD_MS
+        prompt "Sensor data sending period in ms"
+        int
+        default 15000
+        help
+                Period between sending sensor messages from device to cloud.
+                Those messages also contain the state of buttons.
+
+endmenu
+
+rsource "${ZEPHYR_BASE}/../sidewalk/samples/common/Kconfig.defconfig"
+
+source "Kconfig.zephyr"
