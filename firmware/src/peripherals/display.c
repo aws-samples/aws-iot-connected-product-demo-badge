@@ -43,7 +43,7 @@ int init_display(void) {
     display_handler();
     display_blanking_off(display_dev);
 
-    led_set_brightness(led_pwm, 0, 100);
+    set_display_brightness(100);
 
     LOG_INF("init complete.");
     return 0;
