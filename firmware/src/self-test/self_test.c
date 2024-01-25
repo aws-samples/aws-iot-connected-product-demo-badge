@@ -69,13 +69,6 @@ lv_obj_t *ta_popup_message;
 #define TEST_TEMP_MAX 40
 #define TEST_FILE_PATH USB_PATH("test-file.txt")
 
-static void lvgl_task(struct k_work *work) {
-    display_handler();
-    k_msleep(10);
-}
-K_WORK_DEFINE(lvgl_work, lvgl_task);
-
-
 static void init_ui_display() {
     lv_obj_clean(lv_scr_act());
 
@@ -156,7 +149,7 @@ static bool check_bool_and_print(bool successful, int row, char *label_text, cha
         LOG_ERR("Testing %s: ERROR (%s)", label_text, text);
     }
 
-    k_work_submit(&lvgl_work);
+    display_handler();
 
     return successful;
 }
@@ -351,7 +344,7 @@ void show_popup(char *text, int color) {
 
     lv_textarea_set_text(ta_popup_message, text);
 
-    k_work_submit(&lvgl_work);
+    display_handler();
 }
 
 /*
@@ -556,7 +549,7 @@ void self_test(void *context, void *dummy1, void *dummy2) {
     show_popup("Press Button 1!", 0xc0c0ff);
 
     k_msleep(100);
-    k_work_submit(&lvgl_work);
+    display_handler();
 
     if (!wait_for_button(&button1_pressed)) {
         return;

@@ -55,6 +55,16 @@ void display_handler() {
     k_mutex_unlock(&display_handler_mutex);
 }
 
+static void display_handler_async_internal(struct k_work *work) {
+    display_handler();
+    k_msleep(10);
+}
+
+inline void display_handler_async() {
+  K_WORK_DEFINE(lvgl_work, display_handler_async_internal);
+  k_work_submit(&lvgl_work);
+}
+
 lv_obj_t *show_qr_code(const char *url) {
     // cleanup old resources
     delete_qr_code();

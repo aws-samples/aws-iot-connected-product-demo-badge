@@ -76,6 +76,7 @@ void led_strip_set_brightness(uint8_t value);
 void led_strip_set_pixel(size_t index, uint8_t r, uint8_t g, uint8_t b);
 
 void display_handler();
+void display_handler_async();
 lv_obj_t *show_picture(const char *path);
 void delete_picture();
 lv_obj_t *show_qr_code(const char *url);
