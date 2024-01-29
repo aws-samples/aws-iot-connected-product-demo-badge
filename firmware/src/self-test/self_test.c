@@ -317,13 +317,13 @@ bool test_expresslink() {
 }
 
 /*
-    Resets the expresslink module by sending the "AT+RESET" command.
+    Resets the expresslink module by using the reset function (which includes an appropriate amount of sleep)
     NOTE: the response is not checked.
 
     It returns void.
 */
 void test_expresslink_reset() {
-    expresslink_send_command("AT+RESET\n", NULL, 0);
+    expresslink_reset();
 }
 
 /*
@@ -588,7 +588,6 @@ void self_test(void *context, void *dummy1, void *dummy2) {
     // reset expresslink to drive EL_EVENT high
     // --> EVENT LED should turn on
     test_expresslink_reset();
-    k_msleep(1000);
 
     // check EL_EVENT signal
     test_result = check_bool_and_print(expresslink_check_event_pending(), EL_EVENT_ROW, EL_EVENT_TEXT, NULL);

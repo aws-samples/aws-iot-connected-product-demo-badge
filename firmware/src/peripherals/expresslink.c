@@ -60,6 +60,8 @@ static const struct gpio_dt_spec expresslink_event_pin = GPIO_DT_SPEC_GET(DT_ALI
 static const struct gpio_dt_spec expresslink_wake_pin = GPIO_DT_SPEC_GET(DT_ALIAS(expresslink_wake), gpios);
 static const struct gpio_dt_spec expresslink_reset_pin = GPIO_DT_SPEC_GET(DT_ALIAS(expresslink_reset), gpios);
 
+#define EXPRESSLINK_RESET_TIME (2500) // milliseconds
+
 bool expresslink_check_event_pending(void) {
     return gpio_pin_get_dt(&expresslink_event_pin) == 1;
 }
@@ -469,13 +471,15 @@ int expresslink_over_the_wire_update(const char *path, const char *expected_vers
     }
     LOG_INF("%s", r);
 
+    // explicitly use AT command to ensure proper shutdown and reset
     expresslink_send_command("AT+RESET\n", NULL, 0);
-    k_msleep(3000);
+    k_msleep(EXPRESSLINK_RESET_TIME*2);
 
     LOG_INF("New ExpressLink information after update:");
     expresslink_send_command("AT+CONF? About\n", NULL, 0);
     expresslink_send_command("AT+CONF? Version\n", NULL, 0);
     expresslink_send_command("AT+CONF? TechSpec\n", NULL, 0);
+    expresslink_send_command("AT+EVENT?\n", NULL, 0);
 
     LOG_INF("ExpressLink firmware update completed.");
     turn_user_led_off();
@@ -496,7 +500,7 @@ void expresslink_reset() {
     k_msleep(50);
     ring_buf_reset(&receive_ring);
     gpio_pin_set_dt(&expresslink_reset_pin, 1);
-    k_msleep(2500); // give it time to boot up
+    k_msleep(EXPRESSLINK_RESET_TIME); // give it time to boot up
 }
 
 void expresslink_wake() {
