@@ -107,7 +107,7 @@ void welcome_screen(void *context, void *dummy1, void *dummy2) {
             k_msleep(50); // lazy debounce
             button3_pressed = false;
         }
-        if (button2_pressed && button4_pressed) {
+        if (button2_pressed || button4_pressed) {
             cleanup_ui_display();
             self_test(NULL, NULL, NULL);
             return;

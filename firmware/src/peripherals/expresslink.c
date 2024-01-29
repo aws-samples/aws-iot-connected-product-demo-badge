@@ -404,6 +404,12 @@ int expresslink_over_the_wire_update(const char *path, const char *expected_vers
         return -1;
     }
 
+    lv_obj_t* message_label = lv_label_create(lv_scr_act());
+    lv_obj_set_style_text_align(message_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(message_label, LV_ALIGN_TOP_MID, 0, 10);
+    lv_label_set_text(message_label, "ExpressLink firmware\nupdate in progress...");
+    display_handler_async();
+
     k_mutex_lock(&uart_expresslink_mutex, K_FOREVER);
 
     LOG_INF("Current ExpressLink information before update:");
@@ -490,6 +496,9 @@ int expresslink_over_the_wire_update(const char *path, const char *expected_vers
     ret = 0;
 
 cleanup:
+    lv_obj_del(message_label);
+    display_handler();
+
     fs_close(&file);
     k_mutex_unlock(&uart_expresslink_mutex);
     return ret;

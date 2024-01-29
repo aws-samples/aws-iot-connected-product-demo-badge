@@ -238,6 +238,66 @@ void usb_mass_storage_wiping(const struct shell *sh, size_t argc, char **argv) {
     NVIC_SystemReset(); // necessary to automatically re-format the external flash with a working FATFS
 }
 
+void failed_bootup(const char* msg) {
+    static lv_obj_t* message_label;
+    message_label = lv_label_create(lv_scr_act());
+    lv_obj_set_style_text_align(message_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    lv_obj_align(message_label, LV_ALIGN_TOP_MID, 0, 20);
+    lv_label_set_text_static(message_label, "ERROR\nCheck serial console!");
+    display_handler_async();
+
+    led_strip_set_brightness(25);
+
+    bool toggle = false;
+    int64_t last_updated_at = k_uptime_get();
+    while (true) {
+        if (last_updated_at + 1000 < k_uptime_get()) {
+            LOG_ERR("%s", msg);
+            led_strip_set_pixel(0, toggle ? 0 : 255, 0, 0);
+            led_strip_set_pixel(1, toggle ? 0 : 255, 0, 0);
+            led_strip_set_pixel(2, toggle ? 0 : 255, 0, 0);
+            toggle = !toggle;
+            last_updated_at = k_uptime_get();
+        }
+    }
+}
+
+void verify_filesystem_content() {
+    int ret;
+    size_t msg_size = 512;
+    char *msg = malloc(msg_size);
+    struct fs_dirent dirent;
+
+    char* expected_files[] = {
+        "v2.5.0.bin",
+        "VERSION.txt",
+        "pictures/aws_logo.bmp",
+        "pictures/bear.bmp",
+        "pictures/day1.bmp",
+        "pictures/employees.bmp",
+        "pictures/toy.bmp",
+        NULL
+    };
+
+    char** f = expected_files;
+    while (*f != NULL) {
+        char p[32];
+        snprintf(p, sizeof(p), "%s%s", USB_PATH(""), *f);
+        ret = fs_stat(p, &dirent);
+        if (ret != 0) {
+            snprintf(msg, msg_size, "Add missing file and power-cycle the device: %s", *f);
+            goto failed;
+        }
+        ++f;
+    }
+
+    return;
+
+failed:
+    failed_bootup(msg);
+    // never returns
+}
+
 int init_usb_mass_storage() {
     int ret;
 
@@ -258,19 +318,13 @@ int init_usb_mass_storage() {
     const struct shell *sh = shell_backend_uart_get_ptr();
     expresslink_export_certificate(sh, 0, NULL, false);
 
+    verify_filesystem_content();
+
     ret = expresslink_over_the_wire_update("v2.5.0.bin", "2.5.0", false);
     if (ret != 0) {
-        led_strip_set_brightness(50);
-        while (true) {
-            led_strip_set_pixel(0, 255, 0, 0);
-            led_strip_set_pixel(1, 255, 0, 0);
-            led_strip_set_pixel(2, 255, 0, 0);
-            k_msleep(1000);
-            led_strip_set_pixel(0, 0, 0, 0);
-            led_strip_set_pixel(1, 0, 0, 0);
-            led_strip_set_pixel(2, 0, 0, 0);
-            k_msleep(1000);
-        }
+        const char* msg = "ExpressLink over-the-wire update failed!";
+        failed_bootup(msg);
+        // never returns
     }
 
     expresslink_provisioning();
