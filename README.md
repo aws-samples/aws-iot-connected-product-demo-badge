@@ -6,6 +6,11 @@ The Demo Badge device was built for this hands-on workshop at re:Invent 2023 and
 
 https://catalog.workshops.aws/aws-iot-connected-product-demo-badge
 
+![photo of the Demo Badge](demo_badge_product_photo.jpg)
+
+Rendering of front and backside of the Demo Badge:
+![rendering of front and backside of Demo Badge](demo_badge_2023_both.png)
+
 ## Hardware
 
 See the [Hardware README](./hardware/README.md) file.
